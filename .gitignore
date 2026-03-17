@@ -1,0 +1,17 @@
+## Carpetas de compilación
+[Bb]in/
+[Oo]bj/
+
+## Archivos de usuario de Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Archivos de base de datos local
+*.mdf
+*.ldf
+
+## Publicación
+publish/
