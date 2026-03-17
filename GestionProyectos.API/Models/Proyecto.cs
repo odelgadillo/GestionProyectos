@@ -6,6 +6,6 @@
         public required string Nombre { get; set; }
         public string? Descripcion { get; set; }
         public string? LogoUrl { get; set; }
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public DateTime FechaCreacion { get; set; } = DateTime.Now; // Comentario de prueba
     }
 }
