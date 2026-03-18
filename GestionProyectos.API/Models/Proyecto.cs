@@ -7,5 +7,7 @@
         public string? Descripcion { get; set; }
         public string? LogoUrl { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now; // Comentario de prueba
+
+        public ICollection<Colaborador> Colaboradores { get; set; } = new List<Colaborador>();
     }
 }

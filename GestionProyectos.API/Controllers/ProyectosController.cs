@@ -32,12 +32,11 @@ namespace GestionProyectos.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Proyecto>> GetProyecto(int id)
         {
-            var proyecto = await _context.Proyectos.FindAsync(id);
+            var proyecto = await _context.Proyectos
+                .Include(p => p.Colaboradores) // Incluir los colaboradores relacionados
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (proyecto == null)
-            {
-                return NotFound();
-            }
+            if (proyecto == null) return NotFound();
 
             return proyecto;
         }
