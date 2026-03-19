@@ -19,9 +19,23 @@ namespace GestionProyectos.API.Controllers
 
         // GET: api/Proyectos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProyectoDTO>>> GetProyectos()
+        public async Task<ActionResult<IEnumerable<ProyectoDTO>>> GetProyectos(string? buscar)
         {
-            return await _context.Proyectos
+            // 1. Creamos la consulta base (Queryable)
+            var consulta = _context.Proyectos.AsQueryable();
+
+            // 2. Si el usuario envio algo para buscar, filtramos
+            if (!string.IsNullOrEmpty(buscar))
+            {
+                consulta = consulta.Where(p => 
+                    p.Nombre.Contains(buscar) ||
+                    p.Colaboradores.Any(c => c.Nombre.Contains(buscar))
+                );
+            }
+
+            // 3. Transformamos al DTO y ejecutamos la consulta
+
+            return await consulta
                 .Select(p => new ProyectoDTO
                 {
                     Id = p.Id,
