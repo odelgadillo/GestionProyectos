@@ -9,5 +9,6 @@
         public DateTime FechaCreacion { get; set; } = DateTime.Now; // Comentario de prueba
 
         public ICollection<Colaborador> Colaboradores { get; set; } = new List<Colaborador>();
+        public ICollection<Documento> Documentos { get; set; } = new List<Documento>();
     }
 }

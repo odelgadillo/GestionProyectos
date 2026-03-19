@@ -34,6 +34,7 @@ namespace GestionProyectos.API.Controllers
         {
             var proyecto = await _context.Proyectos
                 .Include(p => p.Colaboradores) // Incluir los colaboradores relacionados
+                .Include(p => p.Documentos) // Incluir los documentos relacionados
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (proyecto == null) return NotFound();
