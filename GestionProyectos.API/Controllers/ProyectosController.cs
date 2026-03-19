@@ -19,23 +19,25 @@ namespace GestionProyectos.API.Controllers
 
         // GET: api/Proyectos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProyectoDTO>>> GetProyectos(string? buscar)
+        public async Task<ActionResult<IEnumerable<ProyectoDTO>>> GetProyectos(string? buscar, int pagina = 1, int cantidad = 10)
         {
-            // 1. Creamos la consulta base (Queryable)
             var consulta = _context.Proyectos.AsQueryable();
 
-            // 2. Si el usuario envio algo para buscar, filtramos
+            // 1. Aplicamos el filtro de busqueda
             if (!string.IsNullOrEmpty(buscar))
             {
-                consulta = consulta.Where(p => 
+                consulta = consulta.Where(p =>
                     p.Nombre.Contains(buscar) ||
                     p.Colaboradores.Any(c => c.Nombre.Contains(buscar))
                 );
             }
 
-            // 3. Transformamos al DTO y ejecutamos la consulta
-
-            return await consulta
+            // 2. Aplicamos logica de paginacion
+            // Skip: se salta los registros de paginas anteriores
+            // Take: toma solo la cantidad solicitada
+            var resultados = await consulta
+                .Skip((pagina - 1) * cantidad) // Se calcularia el numero de pagina * cantidad por pagina
+                .Take(cantidad) // Se indicaria la cantidad por pagina
                 .Select(p => new ProyectoDTO
                 {
                     Id = p.Id,
@@ -44,6 +46,10 @@ namespace GestionProyectos.API.Controllers
                     CantidadDocumentos = p.Documentos.Count
                 })
                 .ToListAsync();
+
+            return Ok(resultados);
+
+
         }
 
         // GET: api/Proyectos/5
@@ -81,12 +87,12 @@ namespace GestionProyectos.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProyecto(int id, Proyecto proyecto)
         {
-            if (id != proyecto.Id)
-            {
-                return BadRequest();
-            }
+            if (id != proyecto.Id) return BadRequest();
 
-            _context.Entry(proyecto).State = EntityState.Modified;
+            var proyectoExistente = await _context.Proyectos.FindAsync(id);
+            if (proyectoExistente == null) return NotFound();
+
+            proyectoExistente.Nombre = proyecto.Nombre;
 
             try
             {
@@ -94,14 +100,7 @@ namespace GestionProyectos.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProyectoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
