@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using GestionProyectos.API.Data;
+using GestionProyectos.API.DTOs;
+using GestionProyectos.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using GestionProyectos.API.Data;
-using GestionProyectos.API.Models;
 
 namespace GestionProyectos.API.Controllers
 {
@@ -23,19 +19,43 @@ namespace GestionProyectos.API.Controllers
 
         // GET: api/Proyectos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Proyecto>>> GetProyectos()
+        public async Task<ActionResult<IEnumerable<ProyectoDTO>>> GetProyectos()
         {
-            return await _context.Proyectos.ToListAsync();
+            return await _context.Proyectos
+                .Select(p => new ProyectoDTO
+                {
+                    Id = p.Id,
+                    Nombre = p.Nombre,
+                    CantidadColaboradores = p.Colaboradores.Count,
+                    CantidadDocumentos = p.Documentos.Count
+                })
+                .ToListAsync();
         }
 
         // GET: api/Proyectos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Proyecto>> GetProyecto(int id)
+        public async Task<ActionResult<ProyectoDetalleDTO>> GetProyecto(int id)
         {
             var proyecto = await _context.Proyectos
-                .Include(p => p.Colaboradores) // Incluir los colaboradores relacionados
-                .Include(p => p.Documentos) // Incluir los documentos relacionados
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .Include(p => p.Colaboradores)
+                .Include(p => p.Documentos)
+                .Where(p => p.Id == id)
+                .Select(p => new ProyectoDetalleDTO
+                {
+                    Id = p.Id,
+                    Nombre = p.Nombre,
+                    Colaboradores = p.Colaboradores.Select(c => new ColaboradorResumenDTO
+                    {
+                        Nombre = c.Nombre,
+                        Rol = c.Rol
+                    }).ToList(),
+                    Documentos = p.Documentos.Select(d => new DocumentoResumenDTO
+                    {
+                        Nombre = d.Nombre,
+                        Enlace = d.Enlace
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
 
             if (proyecto == null) return NotFound();
 
