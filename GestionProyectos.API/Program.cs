@@ -1,7 +1,16 @@
 using GestionProyectos.API.Data;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day) // Crea un archivo por dia
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog(); // Configura Serilog como el logger de la aplicacion
 
 // Add services to the container.
 
