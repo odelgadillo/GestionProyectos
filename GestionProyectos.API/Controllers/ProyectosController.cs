@@ -121,11 +121,12 @@ namespace GestionProyectos.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProyecto(int id)
         {
-            var proyecto = await _context.Proyectos.FindAsync(id);
-            if (proyecto == null)
-            {
-                return NotFound();
-            }
+            var proyecto = await _context.Proyectos
+                .Include(p => p.Colaboradores)
+                .Include(p => p.Documentos)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (proyecto == null) return NotFound();
 
             _context.Proyectos.Remove(proyecto);
             await _context.SaveChangesAsync();
