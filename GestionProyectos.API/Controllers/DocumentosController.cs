@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using GestionProyectos.API.Models;
+using GestionProyectos.API.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using GestionProyectos.API.Data;
-using GestionProyectos.API.Models;
 
 namespace GestionProyectos.API.Controllers
 {
@@ -14,32 +8,28 @@ namespace GestionProyectos.API.Controllers
     [ApiController]
     public class DocumentosController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDocumentoService _documentoService;
 
-        public DocumentosController(ApplicationDbContext context)
+        public DocumentosController(IDocumentoService documentoService)
         {
-            _context = context;
+            _documentoService = documentoService;
         }
 
         // GET: api/Documentos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Documento>>> GetDocumentos()
         {
-            return await _context.Documentos.ToListAsync();
+            var documentos = await _documentoService.GetDocumentosAsync();
+            return Ok(documentos);
         }
 
         // GET: api/Documentos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Documento>> GetDocumento(int id)
         {
-            var documento = await _context.Documentos.FindAsync(id);
-
-            if (documento == null)
-            {
-                return NotFound();
-            }
-
-            return documento;
+            var documento = await _documentoService.GetDocumentoByIdAsync(id);
+            if (documento == null) return NotFound();
+            return Ok(documento);
         }
 
         // PUT: api/Documentos/5
@@ -47,28 +37,9 @@ namespace GestionProyectos.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDocumento(int id, Documento documento)
         {
-            if (id != documento.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(documento).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DocumentoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            if (id != documento.Id) return BadRequest();
+            var actualizado = await _documentoService.UpdateDocumentoAsync(id, documento);
+            if(!actualizado) return NotFound();
 
             return NoContent();
         }
@@ -78,31 +49,18 @@ namespace GestionProyectos.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Documento>> PostDocumento(Documento documento)
         {
-            _context.Documentos.Add(documento);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDocumento", new { id = documento.Id }, documento);
+            var nuevoDocumento = await _documentoService.CreateDocumentoAsync(documento);
+            return CreatedAtAction(nameof(GetDocumento), new { id = documento.Id }, documento);
         }
 
         // DELETE: api/Documentos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDocumento(int id)
         {
-            var documento = await _context.Documentos.FindAsync(id);
-            if (documento == null)
-            {
-                return NotFound();
-            }
-
-            _context.Documentos.Remove(documento);
-            await _context.SaveChangesAsync();
+            var eliminado = await _documentoService.DeleteDocumentoAsync(id);
+            if(!eliminado) return NotFound();
 
             return NoContent();
-        }
-
-        private bool DocumentoExists(int id)
-        {
-            return _context.Documentos.Any(e => e.Id == id);
         }
     }
 }

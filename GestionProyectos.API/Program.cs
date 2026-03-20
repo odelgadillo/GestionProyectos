@@ -26,6 +26,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IProyectoService, ProyectoService>();
 builder.Services.AddScoped<IColaboradorService, ColaboradorService>();
+builder.Services.AddScoped<IDocumentoService, DocumentoService>();
 
 var app = builder.Build();
 
