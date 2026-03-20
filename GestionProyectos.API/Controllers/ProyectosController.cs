@@ -14,12 +14,9 @@ namespace GestionProyectos.API.Controllers
     public class ProyectosController : ControllerBase
     {
         private readonly IProyectoService _proyectoService;
-        private readonly ApplicationDbContext _context;
-
-        public ProyectosController(ApplicationDbContext context, IProyectoService proyectoService)
+        public ProyectosController(IProyectoService proyectoService)
         {
             _proyectoService = proyectoService;
-            _context = context;
         }
 
         // GET: api/Proyectos
@@ -69,11 +66,6 @@ namespace GestionProyectos.API.Controllers
             if(!eliminado) return NotFound();
 
             return NoContent();
-        }
-
-        private bool ProyectoExists(int id)
-        {
-            return _context.Proyectos.Any(e => e.Id == id);
         }
     }
 }

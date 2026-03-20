@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using GestionProyectos.API.Models;
+using GestionProyectos.API.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using GestionProyectos.API.Data;
-using GestionProyectos.API.Models;
 
 namespace GestionProyectos.API.Controllers
 {
@@ -14,34 +8,28 @@ namespace GestionProyectos.API.Controllers
     [ApiController]
     public class ColaboradoresController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IColaboradorService _colaboradorService;
 
-        public ColaboradoresController(ApplicationDbContext context)
+        public ColaboradoresController(IColaboradorService colaboradorService)
         {
-            _context = context;
+            _colaboradorService = colaboradorService;
         }
 
         // GET: api/Colaboradores
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Colaborador>>> GetColaboradores()
         {
-            return await _context.Colaboradores
-                .Include(c => c.Proyecto) // Incluir el proyecto relacionado
-                .ToListAsync();
+            var colaboradores = await _colaboradorService.GetColaboradoresAsync();
+            return Ok(colaboradores);
         }
 
         // GET: api/Colaboradores/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Colaborador>> GetColaborador(int id)
         {
-            var colaborador = await _context.Colaboradores.FindAsync(id);
-
-            if (colaborador == null)
-            {
-                return NotFound();
-            }
-
-            return colaborador;
+            var colaborador = await _colaboradorService.GetColaboradorByIdAsync(id);
+            if (colaborador == null) return NotFound();
+            return Ok(colaborador);
         }
 
         // PUT: api/Colaboradores/5
@@ -49,28 +37,10 @@ namespace GestionProyectos.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutColaborador(int id, Colaborador colaborador)
         {
-            if (id != colaborador.Id)
-            {
-                return BadRequest();
-            }
+            if (id != colaborador.Id) return BadRequest();
 
-            _context.Entry(colaborador).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ColaboradorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var actualizado = await _colaboradorService.UpdateColaboradorAsync(id, colaborador);
+            if (!actualizado) return NotFound();
 
             return NoContent();
         }
@@ -80,31 +50,18 @@ namespace GestionProyectos.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Colaborador>> PostColaborador(Colaborador colaborador)
         {
-            _context.Colaboradores.Add(colaborador);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetColaborador", new { id = colaborador.Id }, colaborador);
+            var nuevoColaborador = await _colaboradorService.CreateColaboradorAsync(colaborador);
+            return CreatedAtAction(nameof(GetColaborador), new { id = colaborador.Id }, colaborador);
         }
 
         // DELETE: api/Colaboradores/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteColaborador(int id)
         {
-            var colaborador = await _context.Colaboradores.FindAsync(id);
-            if (colaborador == null)
-            {
-                return NotFound();
-            }
-
-            _context.Colaboradores.Remove(colaborador);
-            await _context.SaveChangesAsync();
-
+            var eliminado = await _colaboradorService.DeleteColaboradorAsync(id);
+            if(!eliminado) return NotFound();
+            
             return NoContent();
-        }
-
-        private bool ColaboradorExists(int id)
-        {
-            return _context.Colaboradores.Any(e => e.Id == id);
         }
     }
 }

@@ -25,6 +25,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IProyectoService, ProyectoService>();
+builder.Services.AddScoped<IColaboradorService, ColaboradorService>();
 
 var app = builder.Build();
 
