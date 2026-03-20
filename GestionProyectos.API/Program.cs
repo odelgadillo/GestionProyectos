@@ -1,4 +1,5 @@
 using GestionProyectos.API.Data;
+using GestionProyectos.API.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -22,6 +23,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddScoped<IProyectoService, ProyectoService>();
 
 var app = builder.Build();
 
