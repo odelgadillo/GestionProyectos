@@ -50,6 +50,7 @@ namespace GestionProyectos.API.Controllers
         // POST: api/Proyectos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult<Proyecto>> PostProyecto(Proyecto proyecto)
         {
             var nuevoProyecto = await _proyectoService.CreateProyectoAsync(proyecto);
@@ -58,6 +59,7 @@ namespace GestionProyectos.API.Controllers
 
         // DELETE: api/Proyectos/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeleteProyecto(int id)
         {
             var eliminado = await _proyectoService.DeleteProyectoAsync(id);
