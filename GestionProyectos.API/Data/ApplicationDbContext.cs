@@ -12,5 +12,6 @@ namespace GestionProyectos.API.Data
         public DbSet<Proyecto> Proyectos { get; set; }
         public DbSet<Colaborador> Colaboradores { get; set; }
         public DbSet<Documento> Documentos { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
     }
 }
