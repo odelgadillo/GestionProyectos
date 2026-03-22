@@ -1,14 +1,12 @@
-﻿using GestionProyectos.API.Attributes;
-using GestionProyectos.API.Data;
-using GestionProyectos.API.DTOs;
+﻿using GestionProyectos.API.DTOs;
 using GestionProyectos.API.Models;
 using GestionProyectos.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace GestionProyectos.API.Controllers
 {
-    [ApiKey]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProyectosController : ControllerBase
