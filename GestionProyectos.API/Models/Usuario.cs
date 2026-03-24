@@ -21,5 +21,7 @@ namespace GestionProyectos.API.Models
         [Required]
         [StringLength(20)]
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
+
+        public string NombreCompleto { get; set; } = string.Empty;
     }
 }
