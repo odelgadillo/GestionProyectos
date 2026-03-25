@@ -3,6 +3,7 @@ using GestionProyectos.API.Models;
 using GestionProyectos.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography.Pkcs;
 
 namespace GestionProyectos.API.Controllers
 {
@@ -18,7 +19,7 @@ namespace GestionProyectos.API.Controllers
         }
 
         // GET: api/Proyectos
-        [HttpGet]
+        [HttpGet("Todos")]
         public async Task<ActionResult<IEnumerable<ProyectoDTO>>> GetProyectos(string? buscar, int pagina = 1, int cantidad = 10)
         {
             var proyectos = await _proyectoService.GetProyectosAsync(buscar, pagina, cantidad);
@@ -32,6 +33,25 @@ namespace GestionProyectos.API.Controllers
             var proyecto = await _proyectoService.GetProyectoByIdAsync(id);
             if (proyecto == null) return NotFound();
             return Ok(proyecto);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetAll()
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userRoleClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || string.IsNullOrEmpty(userRoleClaim))
+            {
+                return Unauthorized("No se pudo identirficar al usuario desde el token.");
+            }
+
+            int usuarioId = int.Parse(userIdClaim);
+            string rolSistema = userRoleClaim;
+
+            var proyectos = await _proyectoService.GetProyectosParaUsuarioAsync(usuarioId, rolSistema);
+            return Ok(proyectos);
         }
 
         // PUT: api/Proyectos/5

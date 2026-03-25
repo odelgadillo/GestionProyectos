@@ -95,5 +95,18 @@ namespace GestionProyectos.API.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<IEnumerable<Proyecto>> GetProyectosParaUsuarioAsync(int usuarioId, string rolSistema)
+        {
+            if (rolSistema == "Admin")
+            {
+                return await _context.Proyectos.ToListAsync();
+            }
+
+            return await _context.AsignacionesProyectos
+                .Where(a => a.UsuarioId == usuarioId)
+                .Select(a => a.Proyecto!)
+                .ToListAsync();
+        }
     }
 }

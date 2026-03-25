@@ -10,5 +10,6 @@ namespace GestionProyectos.API.Services
         Task<Proyecto> CreateProyectoAsync(Proyecto proyecto);
         Task<bool> UpdateProyectoAsync(int id, Proyecto proyecto);
         Task<bool> DeleteProyectoAsync(int id);
+        Task<IEnumerable<Proyecto>> GetProyectosParaUsuarioAsync(int usuarioId, string rolSistema);
     }
 }
