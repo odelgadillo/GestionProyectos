@@ -16,12 +16,16 @@ namespace GestionProyectos.API.Models
 
         [Required]
         [StringLength(20)]
-        public string Rol { get; set; } = "Usuario";
+        public string RolSistema { get; set; } = "Usuario";
 
         [Required]
         [StringLength(20)]
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
+        public bool EstaActivo { get; set; } = true;
+
         public string NombreCompleto { get; set; } = string.Empty;
+
+        public ICollection<AsignacionProyecto> Asignaciones { get; set; } = new List<AsignacionProyecto>();
     }
 }

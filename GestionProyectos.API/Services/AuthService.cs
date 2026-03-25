@@ -28,7 +28,7 @@ namespace GestionProyectos.API.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                 new Claim(ClaimTypes.Email, usuario.Email),
-                new Claim(ClaimTypes.Role, usuario.Rol),
+                new Claim(ClaimTypes.Role, usuario.RolSistema),
                 new Claim(ClaimTypes.Name, usuario.NombreCompleto)
             };
 

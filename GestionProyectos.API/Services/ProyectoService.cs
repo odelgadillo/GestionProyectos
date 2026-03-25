@@ -20,8 +20,7 @@ namespace GestionProyectos.API.Services
             if (!string.IsNullOrEmpty(buscar))
             {
                 consulta = consulta.Where(p =>
-                    p.Nombre.Contains(buscar) ||
-                    p.Colaboradores.Any(c => c.Nombre.Contains(buscar))
+                    p.Nombre.Contains(buscar)
                 );
             }
 
@@ -35,7 +34,6 @@ namespace GestionProyectos.API.Services
                 {
                     Id = p.Id,
                     Nombre = p.Nombre,
-                    CantidadColaboradores = p.Colaboradores.Count,
                     CantidadDocumentos = p.Documentos.Count
                 })
                 .ToListAsync();
@@ -44,18 +42,12 @@ namespace GestionProyectos.API.Services
         public async Task<ProyectoDetalleDTO?> GetProyectoByIdAsync(int id)
         {
             return await _context.Proyectos
-                .Include(p => p.Colaboradores)
                 .Include(p => p.Documentos)
                 .Where(p => p.Id == id)
                 .Select(p => new ProyectoDetalleDTO
                 {
                     Id = p.Id,
                     Nombre = p.Nombre,
-                    Colaboradores = p.Colaboradores.Select(c => new ColaboradorResumenDTO
-                    {
-                        Nombre = c.Nombre,
-                        Rol = c.Rol
-                    }).ToList(),
                     Documentos = p.Documentos.Select(d => new DocumentoResumenDTO
                     {
                         Nombre = d.Nombre,
@@ -94,7 +86,6 @@ namespace GestionProyectos.API.Services
         public async Task<bool> DeleteProyectoAsync(int id)
         {
             var proyecto = await _context.Proyectos
-                .Include(p => p.Colaboradores)
                 .Include(p => p.Documentos)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
