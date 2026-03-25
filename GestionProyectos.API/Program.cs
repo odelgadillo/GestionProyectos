@@ -28,6 +28,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IProyectoService, ProyectoService>();
+builder.Services.AddScoped<IAsignacionService, AsignacionService>();
 builder.Services.AddScoped<IDocumentoService, DocumentoService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
