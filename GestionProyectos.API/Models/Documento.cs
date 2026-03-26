@@ -11,7 +11,6 @@ namespace GestionProyectos.API.Models
         public string Nombre { get; set; } = string.Empty;
 
         [Required(ErrorMessage ="El enlace o ruta es obligatorio.")]
-        [Url(ErrorMessage = "Por favor, ingresa una URL válida (http:// o https://.")]
         public string Enlace { get; set; } = string.Empty;
 
         [RegularExpression("^(PDF|Excel|Word|URL|Carpeta)$", ErrorMessage = "El tipo debe ser PDF, Excel, Word, URL o Carpeta.")]
@@ -19,5 +18,10 @@ namespace GestionProyectos.API.Models
 
         public int ProyectoId { get; set; }
         public Proyecto? Proyecto { get; set; }
+
+        public int UsuarioId { get; set; }
+        public Usuario? Usuario { get; set; }
+
+        public DateTime FechaSubida { get; set; } = DateTime.UtcNow;
     }
 }
