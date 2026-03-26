@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Attributes\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
 </Project>

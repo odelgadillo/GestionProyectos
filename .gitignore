@@ -18,3 +18,8 @@ publish/
 
 ## Registros de log
 logs/
+
+# Ignorar archivos subidos por usuarios
+**/wwwroot/uploads/*
+# Pero NO ignorar la carpeta en sí (para mantener la estructura)
+!**/wwwroot/uploads/.gitkeep

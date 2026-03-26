@@ -6,7 +6,7 @@ namespace GestionProyectos.API.Services
     {
         Task<IEnumerable<Documento>> GetDocumentosAsync();
         Task<Documento?> GetDocumentoByIdAsync(int id);
-        Task<Documento> CreateDocumentoAsync(Documento documento);
+        Task<Documento> CreateDocumentoAsync(int proyectoId, int usuarioId, IFormFile archivo);
         Task<bool> UpdateDocumentoAsync(int id, Documento documento);
         Task<bool> DeleteDocumentoAsync(int id);
     }

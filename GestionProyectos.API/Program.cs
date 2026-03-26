@@ -68,6 +68,7 @@ app.UseHttpsRedirection();
 app.UseMiddleware<GestionProyectos.API.Middleware.ExceptionMiddleware>();
 
 app.UseAuthentication(); // Quien es el usuario
+app.UseStaticFiles(); // Esto permite servir archivos desde wwwroot
 app.UseAuthorization(); // Que puede hacer el usuario
 
 app.MapControllers();
